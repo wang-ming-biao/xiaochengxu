@@ -1,0 +1,34 @@
+/**index.wxss**/
+.bigbox {
+  width: 234px;
+  height: 324px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #ddd;
+  padding: 15px;
+  box-sizing: border-box;
+}
+image {
+  width: 120px;
+  height: 150px;
+  margin: 30px 0 44px;
+}
+.name {
+  /* 文字两行显示,多余隐藏 */
+  text-overflow: -o-ellipsis-lastline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+
+/* 作者：萤火虫de梦
+链接：https://www.jianshu.com/p/719c95fa0da7
+来源：简书
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。 */
+}
+.Symbol {
+  font-size: 14px;
+  color: #ff2e16;
+}

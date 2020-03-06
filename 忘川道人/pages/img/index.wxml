@@ -1,0 +1,8 @@
+<view class="father">
+<text>图片切换</text>
+<image src="/images/boy.png"></image>
+<view class="son">
+<button size="mini">上一张</button>
+<button size="mini">下一张</button>
+</view>
+</view>

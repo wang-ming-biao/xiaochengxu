@@ -1,0 +1,6 @@
+<!--index.wxml-->
+<view class="bigbox">
+  <image src="http://img1.imgtn.bdimg.com/it/u=3660144574,1777572751&fm=26&gp=0.jpg"></image>
+  <p class="name" mode="widthFix" >高达强袭型</p>
+  <text class="Symbol">$<text class="Number">2000</text></text>
+</view>

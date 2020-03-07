@@ -1,8 +1,8 @@
 <view class="father">
 <text>图片切换</text>
-<image src="/images/boy.png"></image>
+<image src="{{ imgList[index] }}"></image>
 <view class="son">
-<button size="mini">上一张</button>
-<button size="mini">下一张</button>
+<button size="mini" bindtap="prev">上一张</button>
+<button size="mini" bindtap="next">下一张</button>
 </view>
 </view>

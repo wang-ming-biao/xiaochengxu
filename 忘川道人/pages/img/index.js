@@ -5,7 +5,39 @@ Page({
    * 页面的初始数据
    */
   data: {
-
+    imgList: [
+      '/images/boy.png',
+      '/images/girl.png',
+      '/images/left.gif',
+      '/images/right.png'
+    ],
+    index: 0
+  },
+  // 上一张图片
+  prev () {
+    // 当图片为第一张,点上一张时,显示最后一张
+    if( this.data.index === 0 ){
+      this.setData({
+        index:this.data.imgList.length -1
+      })
+        return // 代码执行完后返回出去
+    }
+    this.setData({
+      index: this.data.index -1
+    })
+  },
+  // 下一张图片
+  next () {
+    // 当前为最后一张,点下一张时,显示第一张
+    if(this.data.index === this.data.imgList.length -1) {
+      this.setData({
+        index:0
+      })
+      return // 代码执行完后返回出去
+    }
+    this.setData({
+      index: this.data.index +1
+    })
   },
 
   /**

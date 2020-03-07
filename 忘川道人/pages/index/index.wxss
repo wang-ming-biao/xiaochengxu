@@ -1,5 +1,6 @@
 /**index.wxss**/
 .bigbox {
+  margin: 0 auto;
   width: 234px;
   height: 324px;
   display: flex;
@@ -31,4 +32,12 @@ image {
 .Symbol {
   font-size: 14px;
   color: #ff2e16;
+}
+Swiper {
+  height: 180px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+.swiperimg {
+  width: 220px;
 }

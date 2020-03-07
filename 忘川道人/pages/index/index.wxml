@@ -1,4 +1,14 @@
 <!--index.wxml-->
+<!-- 轮播图练习 swiper组件,参数在文档中查询 -->
+ <swiper indicator-dots indicator-color="rgba(0, 0, 0, .3)" indicator-active-color="#009900" autoplay interval="3000" circular >
+ <!-- block相当于 vue的插槽 -->
+    <block wx:for="{{[1,2,3,4]}}" wx:key="*this">
+      <swiper-item>
+        <image class="swiperimg" src="http://img2.imgtn.bdimg.com/it/u=2803224934,2356680248&fm=26&gp=0.jpg"></image>
+      </swiper-item>
+    </block>
+  </swiper>
+  <!-- 图文展示 -->
 <view class="bigbox">
   <image src="http://img1.imgtn.bdimg.com/it/u=3660144574,1777572751&fm=26&gp=0.jpg"></image>
   <p class="name" mode="widthFix" >高达强袭型</p>

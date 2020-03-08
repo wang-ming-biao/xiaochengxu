@@ -1,0 +1,3 @@
+<!--pages/detail/index.wxml-->
+<!-- 在页面上渲染出来 -->
+<text>英雄技能: {{skill}} </text>

@@ -1,0 +1,48 @@
+/* pages/detail/detail.wxss */
+page {
+  background-color: #363636;
+  color: #fff;
+  font-size: 12px;
+}
+swiper image {
+  width: 100%;
+}
+.content {
+  display: flex;
+  padding: 12px 10px 0;
+}
+.left {
+  width: 191px;
+  display: flex;
+  flex-direction: column;
+}
+.title {
+  font-size: 14px;
+}
+.name {
+  font-size: 20px;
+}
+.right {
+  flex: 1;
+}
+.tags {
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+.tags text {
+  width: 30px;
+  padding: 5px;
+  font-size: 12px;
+  background-color: #029b7f;
+  margin-right: 4px;
+  border-radius: 5px;
+}
+
+.ability .item {
+  display: flex;
+}
+
+.item progress {
+  width: 100px;
+  margin-left: 10px;
+}

@@ -1,0 +1,7 @@
+<!--pages/home/home.wxml-->
+<view class="list">
+  <view class="hero" wx:for="{{heroList}}" wx:key="heroList.name" bindtap="toDetail" data-id="{{item.id}}">
+    <image src="{{ item.iconUrl }}"></image>
+    <text>{{ item.name }}</text>
+  </view>
+</view>

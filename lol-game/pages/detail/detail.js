@@ -21,6 +21,11 @@ Page({
         this.setData({
           hero
         })
+        // 动态设置导航栏标题为 title-name
+        wx.setNavigationBarTitle({
+          // 使用模板字符串形式生成标题
+          title: `${hero.title}-${hero.name}`,
+        })
         // 将结果返回出去
       return
       }

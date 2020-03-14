@@ -3,9 +3,7 @@
 		{
 			"path": "pages/home/home",
 			"style": {
-				"navigationBarTextStyle": "white",
-				"navigationBarTitleText": "优购",
-				"navigationBarBackgroundColor": "#ed4450"
+				"navigationBarTitleText": "优购"
 			}
 		},
 		{
@@ -28,10 +26,10 @@
 		}
 	],
 	"globalStyle": {
-		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"backgroundColor": "#F8F8F8",
+		"navigationBarTextStyle": "white",
+		"navigationBarBackgroundColor": "#ed4450"
 	},
 	"tabBar": {
 	    "color": "#333",

@@ -1,31 +1,30 @@
 <template>
 	<view class="home">
 		<!-- 头部 -->
-		<view class="header">
-			<view class="inner">
-				<icon type="search" color="#bbb" size="16"></icon>
-				<text>搜索</text>
-			</view>
-		</view>
+		<searchLink />
+		<!-- 轮播图 -->
 		<swiper indicator-dots autoplay indicator-active-color="#fff" indicator-color="rgba(255,255,255,0.3)">
-			<swiper-item v-for="(item,index) in 3" :key="index">
+			<swiper-item v-for="item in swiperdata" :key="item.goods_id" >
 				<view class="swiper-item">
-					<image src="http://img3.imgtn.bdimg.com/it/u=13232151,2426034510&fm=26&gp=0.jpg" mode=""></image>
+					<image :src="item.image_src"></image>
 				</view>
 			</swiper-item>
 		</swiper>
 		<!-- 导航栏 -->
 		<view class="nav">
-			<image src="http://157.122.54.189:9090/pyg/icon_index_nav_4@2x.png" mode="" v-for="(item,index) in 4" :key="index"></image>
+			<image :src="item.image_src"  v-for="(item,index) in navs" :key="index"></image>
 		</view>
 		<!-- 楼层区 -->
 		<view class="floor">
-			<view class="floor-item" v-for="(floor,index) in 3" :key="index" >
-				<image src="http://157.122.54.189:9090/pyg/pic_floor01_title.png"></image>
+			<view class="floor-item" v-for="(floor,index) in floors" :key="index" >
+				<image :src="floor.floor_title.image_src"></image>
 				<view class="product-list">
-					<image src="http://157.122.54.189:9090/pyg/pic_floor01_1@2x.png" mode=""></image>
+					<image :src="floor.product_list[0].image_src"></image>
 					<view class="right">
-						<image v-for="(item,index) in 4" :key="index" src="http://157.122.54.189:9090/pyg/pic_floor01_2@2x.png" mode=""></image>
+						<!-- block:不会渲染到页面上,主要用来存放wx:for -->
+						<block v-for="(item,index) in floor.product_list" :key="index">
+						  <image v-if="index" :src="item.image_src" mode=""></image>
+						</block>
 					</view>
 				</view>
 			</view>
@@ -34,31 +33,48 @@
 </template>
 
 <script>
+  import searchLink from '../../components/searchLink.vue'
+  export default {
+	data() {
+		return {
+			swiperdata: [], // 轮播图
+			navs: [], // 导航栏的每个选项
+			floors: [] // 楼层区
+		}
+	},
+	onLoad () {
+		this.getSwiperdata()
+		this.getCatitems()
+		this.getFloordata()
+	},
+	methods: {
+		// 获取轮播图数据
+		async getSwiperdata () {
+			// 使用 async与await 进一步优化
+			this.swiperdata = await this.$request({
+				url: '/api/public/v1/home/swiperdata'
+			})
+		},
+		// 获取导航栏的数据
+		async getCatitems () {
+			this.navs = await this.$request({
+				url: '/api/public/v1/home/catitems'
+			})
+		},
+		// 获取热门商品的数据
+		async getFloordata () {
+			this.floors = await this.$request({
+				url: '/api/public/v1/home/floordata'
+			})
+		}
+	},
+	components: {
+		searchLink
+	}
+  }
 </script>
 
 <style scoped lang="less">
-	.header {
-		height: 100rpx;
-		padding: 20rpx 16rpx;
-		box-sizing: border-box;
-		background-color: #ed4450;
-
-		.inner {
-			height: 60rpx;
-			width: 100%;
-			background-color: #fff;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			border-radius: 4rpx;
-
-			text {
-				color: #bbb;
-				margin-left: 16rpx;
-			}
-		}
-	}
-
 	swiper {
 		height: 340rpx;
 

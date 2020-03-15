@@ -4,8 +4,8 @@
 		<searchLink />
 		<!-- 轮播图 -->
 		<swiper indicator-dots autoplay indicator-active-color="#fff" indicator-color="rgba(255,255,255,0.3)">
-			<swiper-item v-for="item in swiperdata" :key="item.goods_id" >
-				<view class="swiper-item">
+			<swiper-item v-for="(item,index) in swiperdata" :key="item.goods_id" >
+				<view class="swiper-item" >
 					<image :src="item.image_src"></image>
 				</view>
 			</swiper-item>
@@ -54,6 +54,7 @@
 			this.swiperdata = await this.$request({
 				url: '/api/public/v1/home/swiperdata'
 			})
+			console.log(this.swiperdata)
 		},
 		// 获取导航栏的数据
 		async getCatitems () {

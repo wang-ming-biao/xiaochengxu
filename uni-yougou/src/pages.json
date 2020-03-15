@@ -23,6 +23,21 @@
 			"style": {
 				"navigationBarTitleText": "我的"
 			}
+		},
+		{
+			"path": "pages/search_list/search_list",
+			"style": {
+				"navigationBarTitleText": "搜索列表",
+				// 开启下拉刷新
+				"enablePullDownRefresh": true,
+				"onReachBottomDistance":50
+			}
+		},
+		{
+			"path": "pages/item/item",
+			"style": {
+				"navigationBarTitleText": "商品详情"
+			}
 		}
 	],
 	"globalStyle": {
@@ -53,7 +68,7 @@
 	        "pagePath": "pages/me/me",
 	        "iconPath": "./static/images/tabs/icon_me@3x.png",
 	        "selectedIconPath": "./static/images/tabs/icon_me_active@3x.png",
-	        "text": "接口"
+	        "text": "我的"
 	    }]
 	}
 }

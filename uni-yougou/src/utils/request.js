@@ -3,6 +3,7 @@ const BASE_URl = 'https://www.uinav.com'
 // 封装首页图片详情请求接口
 function request({
 	url,
+	data,
 	showLoading = true
 }) {
 	return new Promise((resolve, reject) => {
@@ -16,8 +17,9 @@ function request({
 		}
 		uni.request({
 			url: BASE_URl + url,
+			data,
 			method: 'GET',
-			success: res => {
+			success: res => { 
 				let {
 					meta,
 					message
@@ -25,7 +27,6 @@ function request({
 				if (meta.status === 200) {
 					// 数据正确
 					resolve(message)
-					this.swiperdata = res.data.message
 				} else {
 					// 数据错误,提示用户错误信息
 					uni.showToast({

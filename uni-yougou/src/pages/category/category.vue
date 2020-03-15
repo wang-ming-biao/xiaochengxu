@@ -11,7 +11,7 @@
 			</view>
 			<view class="right">
 				<image src="../../static/images/titleImage.png" mode=""></image>
-				<view class="cate2" v-for="(cate2,index) in categoriesList[activeIndex].children" :key="index" >
+				<view class="cate2" v-for="(cate2,index2) in categoriesList[activeIndex].children" :key="index2" >
 					<!-- 二级分类 -->
 					<view class="title">
 						/
@@ -20,7 +20,7 @@
 					</view>
 					<!-- 三级分类 -->
 					<view class="cate3-wrapper">
-						<view class="cate3" v-for="(cate3,index) in cate2.children" :key="index" >
+						<view @click="toSearchList(cate3.cat_name)" class="cate3" v-for="(cate3,index3) in cate2.children" :key="index3" >
 							<image :src="cate3.cat_icon" mode=""></image>
 							<text>{{ cate3.cat_name }}</text>
 						</view>
@@ -55,6 +55,12 @@
 					url: '/api/public/v1/categories'
 				})
 				console.log(this.categoriesList)
+			},
+			toSearchList (catName) {
+				// 跳转到指定页面方法
+				uni.navigateTo({
+					url: '/pages/search_list/search_list?catName=' + catName
+				})
 			}
 		}
 	}

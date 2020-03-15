@@ -52,6 +52,7 @@
       <view class="icon-text">
         <text class="iconfont icon-kefu "></text>
         <text>联系客服</text>
+		<!-- contact进入客服 -->
 		<button open-type="contact">客服</button>
       </view>
       <view class="icon-text">

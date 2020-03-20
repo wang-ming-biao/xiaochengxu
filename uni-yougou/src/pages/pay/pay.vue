@@ -1,7 +1,7 @@
 <template>
   <view>
     <view class="address-wrapper">
-      <view class="address" v-show="address.userName">
+      <view class="address" v-if="address.userName">
         <view class="receiver">
           <view class="name">收货人：{{address.userName}}</view>
           <view class="phone-num">{{address.telNumber}}</view>
@@ -10,7 +10,7 @@
         <view class="address-txt">收货地址：{{address.provinceName+address.cityName+address.countyName+address.detailInfo}}</view>
       </view>
       <!-- 选择地址 -->
-      <view class="choose-address" @click="getaddr" v-show="!address.userName" >
+      <view class="choose-address" @click="getaddr" v-else>
         <view>请选择地址</view>
         <text class="iconfont icon-arrow-right"></text>
       </view>
@@ -21,15 +21,14 @@
 
     <!-- 商品列表 -->
     <view class="goods-list">
-      <view class="goods-item">
-        <image src="https://api.zbztb.cn/full/2fb113b32f7a2b161f5ee4096c319afedc3fd5a1.jpg"
-             alt="">
+      <view class="goods-item" v-for="(item,index) in commodity" :key="index">
+        <image :src="item.goods_small_logo" alt="" />
         <view class="right">
-          <view class="line-clamp2">xxx</view>
-          <view class="btm">
-            <text class="price">￥<text>xxx</text>.00</text>
-            <view class="goods-num">
-              <text>1000</text>
+        	<text class="text-line2">{{item.goods_name}}</text>
+        	<view class="btm">
+        		<text class="price">￥<text>{{item.goods_price}}</text>.00</text>
+        		<view class="goods-num">
+              <text>{{item.num}}</text>
             </view>
           </view>
         </view>
@@ -45,10 +44,24 @@
 	export default {
 		data() {
 			return {
-				address: {}
+				// 取出存储在本地的地址数据
+				address: uni.getStorageSync('address') || {},
+				commodity: [] // 购物车商品详情
 			}
 		},
+		// 在页面一加载时触发加载购物车商品方法
+		onLoad() {
+			this.queryGoodsList()
+		},
 		methods: {
+			// 过滤掉购物车中未选中的商品
+			filterCart (cart) {
+				// filter : 依次对数组的每一项进行过滤,是true就返回,不是就不返回
+				return cart.filter(item =>{
+					// 如果cart里面的checked是true就返回
+					return item.checked
+				})
+			},
 			getaddr () {
 				// 判断是否拒绝
 				// 1.非拒绝,发起授权,调接口
@@ -76,7 +89,8 @@
 									uni.chooseAddress({
 										success: (res) => {
 											this.address = res
-											console.log(this.address)
+											// 获取到token后存储到本地
+											uni.setStorageSync('address',res)
 										}
 									})
 								}
@@ -84,6 +98,46 @@
 						}
 					}
 					
+				})
+			},
+			async queryGoodsList() {
+				// 根据购物车数据(goodsId) 去发请求
+				// 去除存储在本地的购物车数据,也有可能为空,所以要准备一个空数组
+				let cart = uni.getStorageSync('cart') || []
+				// 若是本地数组为空的话则不用执行以下代码
+				// 过滤掉购物车中未选中的商品
+				cart = this.filterCart(cart)
+				if (!cart.length) {
+					return
+				}
+				// 第一种方法
+				// 遍历 cart数组,拿出里面goodsid进行拼接
+				// let idsStr = ''
+				// cart.forEach(item+>{
+				// 	// 每遍历一次就加一次,每个ID后面用逗号隔开
+				// 	idsStr += item.goodsId + ','
+				// })
+				// 第二种方法
+				// 遍历cart数组,并返回一个处理过的新数组
+				let idsArr = cart.map(item => {
+					return item.goodsId
+				})
+				// 通过join方法,中间用逗号进行拼接
+				let idsStr = idsArr.join(',')
+				// 调用拼接后的参数发送请求
+				let _commodity = await this.$request({
+					url: `/api/public/v1/goods/goodslist?goods_ids=${idsStr}`
+				})
+				// 将本地的cart与服务器返回的数据进行合并
+				this.commodity = cart.map(item => {
+					// 从服务器返回的_commodity找到goods_id为item.goodsId的对象
+					let goods = _commodity.find(v => {
+						// 将对比后的数据返回出去
+						return v.goods_id = item.goodsId
+					})
+					return { ...item,
+						...goods
+					}
 				})
 			}
 		}

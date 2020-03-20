@@ -38,6 +38,24 @@
 			"style": {
 				"navigationBarTitleText": "商品详情"
 			}
+		},
+		{
+			"path": "pages/search/search",
+			"style": {
+				"navigationBarTitleText": "搜索"
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/pay/pay",
+			"style": {
+				"navigationBarTitleText": "支付"
+			}
 		}
 	],
 	"globalStyle": {
@@ -63,7 +81,7 @@
 	        "pagePath": "pages/cart/cart",
 	        "iconPath": "./static/images/tabs/icon_cart@3x.png",
 	        "selectedIconPath": "./static/images/tabs/icon_cart_active@3x.png",
-	        "text": "首页"
+	        "text": "购物车"
 	    }, {
 	        "pagePath": "pages/me/me",
 	        "iconPath": "./static/images/tabs/icon_me@3x.png",

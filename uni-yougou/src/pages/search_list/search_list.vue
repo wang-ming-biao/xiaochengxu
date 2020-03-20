@@ -2,11 +2,12 @@
 	<view>
 		<!-- 头部 -->
 		<view class="header-wrapper">
-		<view class="header">
+		<!-- <view class="header">
 			<icon type="search" size="16" color="#bbb">
 			</icon>
 			<input type="text" v-model="keyWord" @confirm="reload" confirm-type="search" >
-		</view>
+		</view> -->
+		<searchBar @search="searchHandler" :keyWord="keyWord" />
 
 		<!-- 过滤菜单 -->
 		<view class="filter-menu">
@@ -32,8 +33,14 @@
 	</view>
 </template>
 <script>
+	// 导入搜索栏头部组件
+	import searchBar from '@/components/SearchBar.vue'
 	const PAGE_SIZE = 6
 	export default {
+		// 注册组件
+		components: {
+			searchBar
+		},
 		data() {
 			return {
 				menuList: ['综合','销量','价格'], // 综合数据分类
@@ -47,7 +54,7 @@
 			// 无需在结构渲染的变量不要声明在data里面
 			this.pageNum = 1 // 请求数据的页码
 			this.isRequesting = false // 是否请求中
-			this.keyWord = options.catName
+			this.keyWord = options.catName || ''
 			this.queryGoods()
 		},
 		// 下拉刷新时会触发
@@ -67,6 +74,13 @@
 			this.queryGoods()
 		},
 		methods: {
+			// 接受子组件传过来的值
+			searchHandler (inputVal) {
+				// 将子组件的值传递给父组件
+				this.keyWord = inputVal
+				// 调用搜索的方法
+				this.reload()
+			},
 			// 加载第一页数据
 			reload () {
 				// 请求第一页的数据

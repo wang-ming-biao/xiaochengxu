@@ -1,6 +1,6 @@
 <template>
 	<view class="header">
-		<view class="inner">
+		<view class="inner" @click="toSearch" >
 			<icon type="search" color="#bbb" size="16"></icon>
 			<text>搜索</text>
 		</view>
@@ -8,6 +8,15 @@
 </template>
 
 <script>
+	export default {
+		methods: {
+			toSearch () {
+				uni.navigateTo({
+					url: '/pages/search/search'
+				})
+			}
+		}
+	}
 </script>
 
 <style lang="less" scoped>

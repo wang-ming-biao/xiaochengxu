@@ -1,16 +1,16 @@
 <template>
   <view>
     <view class="address-wrapper">
-      <view class="address">
+      <view class="address" v-show="address.userName">
         <view class="receiver">
-          <view class="name">收货人：xx</view>
-          <view class="phone-num">xx</view>
+          <view class="name">收货人：{{address.userName}}</view>
+          <view class="phone-num">{{address.telNumber}}</view>
           <text class="iconfont icon-arrow-right"></text>
         </view>
-        <view class="address-txt">收货地址：xx</view>
+        <view class="address-txt">收货地址：{{address.provinceName+address.cityName+address.countyName+address.detailInfo}}</view>
       </view>
       <!-- 选择地址 -->
-      <view class="choose-address" v-show="false">
+      <view class="choose-address" @click="getaddr" v-show="!address.userName" >
         <view>请选择地址</view>
         <text class="iconfont icon-arrow-right"></text>
       </view>
@@ -41,7 +41,54 @@
     </view>
   </view>
 </template>
-
+<script>
+	export default {
+		data() {
+			return {
+				address: {}
+			}
+		},
+		methods: {
+			getaddr () {
+				// 判断是否拒绝
+				// 1.非拒绝,发起授权,调接口
+				// 2.拒绝的话,弹框提示允许权限
+				// 3.如何判断是否拒绝 wx.getSetting()
+				uni.getSetting({ success: settingRes => {
+						console.log(settingRes)
+						if(settingRes.authSetting['scope.address'] === false) {
+							// 拒绝的话,弹框提示允许权限
+							uni.showModal({
+								title: '授权',
+								content: '请允许通讯地址权限',
+								success: res => {
+									if (res.confirm) {
+										// 调用方法再次请求权限
+										uni.openSetting()
+									}
+								}
+							})
+						} else {
+							// 非拒绝,发起授权,调接口
+							uni.authorize({
+								scope: 'scope.address',
+								success: () => {
+									uni.chooseAddress({
+										success: (res) => {
+											this.address = res
+											console.log(this.address)
+										}
+									})
+								}
+							})
+						}
+					}
+					
+				})
+			}
+		}
+	}
+</script>
 <style lang="less">
 .address-wrapper {
   background-color: #fff;

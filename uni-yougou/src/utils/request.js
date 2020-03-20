@@ -3,6 +3,7 @@ const BASE_URl = 'https://www.uinav.com'
 // 封装首页图片详情请求接口
 function request({
 	url,
+	method,
 	data,
 	showLoading = true
 }) {
@@ -17,8 +18,8 @@ function request({
 		}
 		uni.request({
 			url: BASE_URl + url,
+			method,
 			data,
-			method: 'GET',
 			success: res => { 
 				let {
 					meta,

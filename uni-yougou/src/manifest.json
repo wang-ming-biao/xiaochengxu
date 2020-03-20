@@ -54,7 +54,8 @@
 
 	},
 	"mp-weixin": { /* 微信小程序特有相关 */
-		"appid": "wx38d8faffac4d34d2",
+		// "appid": "wx38d8faffac4d34d2",
+		"appid": "",
 		"setting": {
 			"urlCheck": false
 		},

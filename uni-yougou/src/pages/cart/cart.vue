@@ -129,12 +129,13 @@
 				let _commodity = await this.$request({
 					url: `/api/public/v1/goods/goodslist?goods_ids=${idsStr}`
 				})
+				console.log(_commodity)
 				// 将本地的cart与服务器返回的数据进行合并
 				this.commodity = cart.map(item => {
 					// 从服务器返回的_commodity找到goods_id为item.goodsId的对象
 					let goods = _commodity.find(v => {
 						// 将对比后的数据返回出去
-						return v.goods_id = item.goodsId
+						return v.goods_id === item.goodsId
 					})
 					return { ...item,
 						...goods

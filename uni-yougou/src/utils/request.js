@@ -4,6 +4,7 @@ const BASE_URl = 'https://www.uinav.com'
 function request({
 	url,
 	method,
+	header,
 	data,
 	showLoading = true
 }) {
@@ -19,6 +20,7 @@ function request({
 		uni.request({
 			url: BASE_URl + url,
 			method,
+			header,
 			data,
 			success: res => { 
 				let {

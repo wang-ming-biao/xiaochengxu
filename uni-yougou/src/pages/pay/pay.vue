@@ -35,8 +35,8 @@
       </view>
     </view>
 
-    <view class="bottom-fixed">
-      微信支付(1000.00)
+    <view class="bottom-fixed" @click="pay">
+      微信支付({{totalPrice}}.00)
     </view>
   </view>
 </template>
@@ -46,14 +46,116 @@
 			return {
 				// 取出存储在本地的地址数据
 				address: uni.getStorageSync('address') || {},
-				commodity: [] // 购物车商品详情
+				commodity: [], // 购物车商品详情
+				goodsId: ''
 			}
 		},
 		// 在页面一加载时触发加载购物车商品方法
 		onLoad() {
+			// 先拿到goodsId,再发请求接收商品详情页面传过来的参数
+			this.goodsId = Options.goodsId
+			// 调用请求商品详情,权限申请等逻辑
 			this.queryGoodsList()
 		},
+		computed: {
+			// 总商品价格
+			totalPrice() {
+				// 每一个被选中的商品之和
+				// reduce()遍历数组中的每一项,
+				return this.commodity.reduce((sum, item) => {
+					// sum是一个初始值,通过与每一次遍历后的值进行相加,最后获得所有商品的总值
+					return sum + item.num*item.goods_price
+					// 将遍历出来的每一件商品相加
+				}, 0)
+			},
+			// 详细收货地址
+			consigeeAddr () {
+				// 取出address中的各项属性
+				let {provinceName,cityName,countyName,detailInfo,userName,telNumber} = this.address
+				return provinceName+cityName+countyName+detailInfo+''+userName+''+telNumber
+			}
+		},
 		methods: {
+			// 设置交易方法
+			pay () {
+				// 如果未选择地址,提示
+				if (!this.address.userName) {
+					uni.showToast({
+						title: '请选择收获地址', // 提示的内容
+						icon: 'none'
+					})
+					return
+				}
+				// 如果未登录提示
+				this.token = uni.getStorageSync('token')
+				if(!this.token) {
+					// 如果没有登陆则跳转到登录页
+					uni.navigateTo({
+						url: '../login/login',
+					})
+						return
+				}
+				// 上面的判断都通过的话就创建订单
+				this.createOrder()
+			},
+			// 创建订单
+			async constructor () {
+				let data = await this.$request({
+					url: '/api/public/v1/my/orders/create',
+					method: 'post',
+					header: {
+						Authorization: this.token
+					},
+					data:{
+						order_price: this.totalPrice,
+						consignee_addr: this.consigeeAddr,
+						goods: this.filterGoods()
+					}
+				})
+			},
+			// 过滤数据
+			filterGoods () {
+				// 将本地商品列表拿去遍历希望返回一个商品数组
+				return this.commodity.map(item =>{
+					return {
+						goods_id: item.goods_id,
+						goods_number: item.num,
+						goods_price: item.goods_price
+					}
+				})
+				this.orderNumber = data.order_number
+				// 调用提交付款方法
+				this.dopay()
+				// 订单创建完成,把购物车里面勾选的商品去掉(arrange整理)
+				this.arrangeCart
+			},
+			// 订单创建完成,把购物车里面勾选的商品去掉
+			arrangeCart () {
+				let cart = uni.getStorageSync('cart')
+				cart = cart.filter(item=>{
+					return !item.checked
+				})
+				uni.setStorageSync('cart',cart)
+			},
+			// 提交付款
+			async dopay () {
+				let data = await this.$request({
+					url: '/api/public/v1/my/orders/req_unifiedorder',
+					method: 'post',
+					header: {
+						Authorization: this.token
+					},
+					data:{
+						// 取出过滤数据里的orderNumber,发送给服务器
+						order_number: this.orderNumber
+					}
+				})
+				uni.requestPayment({
+				  ...data.pay,
+				  success (res) { },
+				  fail (res) { }
+				})
+			},
 			// 过滤掉购物车中未选中的商品
 			filterCart (cart) {
 				// filter : 依次对数组的每一项进行过滤,是true就返回,不是就不返回
@@ -103,11 +205,22 @@
 			async queryGoodsList() {
 				// 根据购物车数据(goodsId) 去发请求
 				// 去除存储在本地的购物车数据,也有可能为空,所以要准备一个空数组
-				let cart = uni.getStorageSync('cart') || []
+				this.cart = uni.getStorageSync('cart') || []
 				// 若是本地数组为空的话则不用执行以下代码
 				// 过滤掉购物车中未选中的商品
-				cart = this.filterCart(cart)
-				if (!cart.length) {
+				this.cart = this.filterCart(this.cart)
+				
+				// 当我有goodsId传参的时候,我就构造一个cart
+				if(this.goodsId) {
+					cart = [{
+						// 用parseInt将传过来的id转为number类型
+						goodsId: parseInt(this.goodsId),
+						num:1,
+						checked: true
+					}]
+				}
+				
+				if (!this.cart.length) {
 					return
 				}
 				// 第一种方法
@@ -119,7 +232,7 @@
 				// })
 				// 第二种方法
 				// 遍历cart数组,并返回一个处理过的新数组
-				let idsArr = cart.map(item => {
+				let idsArr = this.cart.map(item => {
 					return item.goodsId
 				})
 				// 通过join方法,中间用逗号进行拼接
@@ -129,11 +242,11 @@
 					url: `/api/public/v1/goods/goodslist?goods_ids=${idsStr}`
 				})
 				// 将本地的cart与服务器返回的数据进行合并
-				this.commodity = cart.map(item => {
+				this.commodity = this.cart.map(item => {
 					// 从服务器返回的_commodity找到goods_id为item.goodsId的对象
 					let goods = _commodity.find(v => {
 						// 将对比后的数据返回出去
-						return v.goods_id = item.goodsId
+						return v.goods_id === item.goodsId
 					})
 					return { ...item,
 						...goods

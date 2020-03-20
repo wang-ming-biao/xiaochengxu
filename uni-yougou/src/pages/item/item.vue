@@ -1,6 +1,6 @@
 <template>
-	<view class="wrapper">
-
+	<!-- 加入判断,在商品详情对象内没有值前不渲染 -->
+	<view class="wrapper" v-if="goods.goods_name">
 		<swiper class="swiper" indicator-dots autoplay circular indicator-color="#ccc" indicator-active-color="#fff">
 			<block v-for="(item, index) in goods.pics" :key="index">
 				<swiper-item>
@@ -53,7 +53,7 @@
 				<text>购物车</text>
 			</view>
 			<view class="btn add-cart-btn" @click="addCart">加入购物车</view>
-			<view class="btn buy-btn">立即购买</view>
+			<view class="btn buy-btn" @click="toBuy" >立即购买</view>
 		</view>
 	</view>
 </template>
@@ -78,6 +78,13 @@
 			}
 		},
 		methods: {
+			// 立即购买
+			toBuy () {
+				// 跳转到支付页面
+				uni.navigateTo({
+					url: '../pay/pay?goodsId=' + this.goods.goods_id
+				})
+			},
 			// 把当前商品加入到购物车
 			addCart() {
 				// 取购物车

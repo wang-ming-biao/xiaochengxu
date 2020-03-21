@@ -26,6 +26,7 @@
 								code: loginRes.code
 							}
 						})
+						console.log('哈哈哈')
 						// 将获取到的token存到本地,方便后面发请求
 						uni.setStorageSync('token',data.token)
 						// 登录后返回

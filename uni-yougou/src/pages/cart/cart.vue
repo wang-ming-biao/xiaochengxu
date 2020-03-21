@@ -49,6 +49,13 @@
 		// 页面一加载时,获取本地的信息,然后向服务器请求数据
 		onShow() {
 			this.queryGoodsList()
+			// 取出本地存储的购物车的数据
+			let cart = uni.getStorageSync('cart') || []
+			// 购物车数量提示
+			uni.setTabBarBadge({
+				index:2,
+				text: cart.length + ''
+			})
 		},
 		// 当页面切换出购物车页面时,将购物车修改后的数据保存到本地内存
 		onHide() {

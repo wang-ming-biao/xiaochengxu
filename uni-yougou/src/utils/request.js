@@ -4,11 +4,36 @@ const BASE_URl = 'https://www.uinav.com'
 function request({
 	url,
 	method,
-	header,
+	// 判断是否需要登录
+	isAuth=false,
 	data,
 	showLoading = true
 }) {
 	return new Promise((resolve, reject) => {
+		// 初始先给一个空的token
+		let header = {}
+		// 如果需要登录
+		if(isAuth) {
+			// 获取到存储在本地的token
+			let token = uni.getStorageSync('token')
+			// 也有可能本地还没存token
+			if(!token) {
+				// 判断用户是否已登录
+				uni.showToast({
+					title: '请先登录', // 弹框提示
+					icon: 'none', // 弹框图标
+					mask: true, // 弹框以下禁止操作
+					success() {
+						uni.navigateTo({
+							url: '/src/pages/login/login.vue'
+						})
+						return reject(new Error('未登录'))
+					}
+				})
+			}
+			header.Authorization = token
+		}
+		
 		if (showLoading) {
 			// 请求前开启Loadding
 			uni.showToast({
@@ -17,6 +42,7 @@ function request({
 				mask: true // loading中,底下不允许点击
 			})
 		}
+		console.log('嘿嘿嘿')
 		uni.request({
 			url: BASE_URl + url,
 			method,
@@ -36,7 +62,16 @@ function request({
 						title: meta.message,
 						icon: 'none'
 					})
+					reject(new Error(meta,message))
 				}
+			},
+			// 网络超时
+			fail() {
+				uni.showToast({
+					title: '网络超时',
+					icon: 'none'
+				})
+				reject(new Error('网络超时'))
 			},
 			complete() {
 				if (showLoading) {

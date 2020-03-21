@@ -51,7 +51,7 @@
 			}
 		},
 		// 在页面一加载时触发加载购物车商品方法
-		onLoad() {
+		onLoad(Options) {
 			// 先拿到goodsId,再发请求接收商品详情页面传过来的参数
 			this.goodsId = Options.goodsId
 			// 调用请求商品详情,权限申请等逻辑
@@ -72,7 +72,7 @@
 			consigeeAddr () {
 				// 取出address中的各项属性
 				let {provinceName,cityName,countyName,detailInfo,userName,telNumber} = this.address
-				return provinceName+cityName+countyName+detailInfo+''+userName+''+telNumber
+				return provinceName+cityName+countyName+detailInfo+' '+userName+' '+telNumber
 			}
 		},
 		methods: {
@@ -86,36 +86,65 @@
 					})
 					return
 				}
-				// 如果未登录提示
-				this.token = uni.getStorageSync('token')
-				if(!this.token) {
-					// 如果没有登陆则跳转到登录页
-					uni.navigateTo({
-						url: '../login/login',
-					})
-						return
-				}
+				// // 如果未登录提示
+				// this.token = uni.getStorageSync('token')
+				// if(!this.token) {
+				// 	// 如果没有登陆则跳转到登录页
+				// 	uni.navigateTo({
+				// 		url: '../login/login',
+				// 	})
+				// 		return
+				// }
 				// 上面的判断都通过的话就创建订单
 				this.createOrder()
 			},
 			// 创建订单
-			async constructor () {
+			async createOrder () {
 				let data = await this.$request({
 					url: '/api/public/v1/my/orders/create',
 					method: 'post',
-					header: {
-						Authorization: this.token
-					},
+					isAuta: true,
 					data:{
 						order_price: this.totalPrice,
 						consignee_addr: this.consigeeAddr,
 						goods: this.filterGoods()
 					}
 				})
+				thi.orderNumber = data.order_number
+				// 调用提交付款方法
+				this.dopay()
+			},
+			// 提交付款
+			async dopay () {
+				let data = await this.$request({
+					url: '/api/public/v1/my/orders/req_unifiedorder',
+					method: 'post',
+					isAuta: true,
+					data:{
+						// 取出过滤数据里的orderNumber,发送给服务器
+						order_number: this.orderNumber
+					}
+				})
+				// 调用方法,唤起微信支付
+				uni.requestPayment({
+				  ...data.pay,
+				  success (res) { 
+					  uni.showToast({
+					  	title: '支付成功',
+						icon: 'success'
+					  })
+				  },
+				  fail (res) { 
+					  uni.showToast({
+					  	title: '支付成功',
+						icon: 'success'
+					  })
+				  }
+				})
 			},
 			// 过滤数据
 			filterGoods () {
-				// 将本地商品列表拿去遍历希望返回一个商品数组
+				// 将本地商品列表拿去遍历,希望返回一个商品数组
 				return this.commodity.map(item =>{
 					return {
 						goods_id: item.goods_id,
@@ -123,11 +152,11 @@
 						goods_price: item.goods_price
 					}
 				})
-				this.orderNumber = data.order_number
-				// 调用提交付款方法
-				this.dopay()
+				// this.orderNumber = data.order_number
+				
 				// 订单创建完成,把购物车里面勾选的商品去掉(arrange整理)
-				this.arrangeCart
+				// 在商品详情页没有传goodsId的情况下
+				!this.goodsId && this.arrangeCart
 			},
 			// 订单创建完成,把购物车里面勾选的商品去掉
 			arrangeCart () {
@@ -136,25 +165,6 @@
 					return !item.checked
 				})
 				uni.setStorageSync('cart',cart)
-			},
-			// 提交付款
-			async dopay () {
-				let data = await this.$request({
-					url: '/api/public/v1/my/orders/req_unifiedorder',
-					method: 'post',
-					header: {
-						Authorization: this.token
-					},
-					data:{
-						// 取出过滤数据里的orderNumber,发送给服务器
-						order_number: this.orderNumber
-					}
-				})
-				uni.requestPayment({
-				  ...data.pay,
-				  success (res) { },
-				  fail (res) { }
-				})
 			},
 			// 过滤掉购物车中未选中的商品
 			filterCart (cart) {
@@ -212,7 +222,7 @@
 				
 				// 当我有goodsId传参的时候,我就构造一个cart
 				if(this.goodsId) {
-					cart = [{
+					this.cart = [{
 						// 用parseInt将传过来的id转为number类型
 						goodsId: parseInt(this.goodsId),
 						num:1,
